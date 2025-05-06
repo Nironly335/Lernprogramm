@@ -4,13 +4,30 @@
 
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: 'Montserrat', sans-serif;
     background-color: #f8f9fa;
     color: #333;
 }
 
 header {
-    background-color: orange;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 1em;
+    background-color: white;
+    color: black;
+    padding: 1em;
+    font-size: 1.5em;
+    font-weight: bold;
+    border-bottom: 3px solid #ccc;
+}
+header .logo {
+    height: 40px;
+    width: auto;
+}
+
+/*header {
+    background-color: white;
     color: black;
     padding: 0.3em;
     text-align: center;
@@ -18,7 +35,7 @@ header {
     font-weight: bold;
     border-bottom: 3px solid #ccc;
     
-}
+}*/
 /*
 
 nav ul {
@@ -67,7 +84,7 @@ main {
     padding: 0.75em 1.5em;
     font-size: 1em;
     border: none;
-    background-color: orange;
+    background-color: #ec6608;
     color: black;
     border-radius: 5px;
     cursor: pointer;
@@ -75,7 +92,7 @@ main {
 }
 
 #category-selection button:hover {
-    background-color: orange;
+    background-color: #ccc;
 }
 
 /* Задания и прогресс */
