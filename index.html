@@ -8,6 +8,11 @@
     <link rel="manifest" href="manifest.json"> <!--подключение манифеста (для PWA)-->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <script src="app.js" type="module" defer></script> <!--подключение JS-логики, defer нужен, чтобы скрипт выполнялся после загрузки HTML-->
+
+    <!--Katex-->
+    <link rel = "stylesheet" href="katex/katex.css">
+    <script src="katex/katex.js" defer></script>
+    <script src="katex/contrib/auto-render.js" defer></script>
 </head>
 
 <body>
@@ -42,6 +47,7 @@
         <div id="question-text"></div>
         <div id="answer"></div>
         <progress id="progress-bar" value="0" max="100"></progress>
+        <button id="exit-quiz">Quiz beenden</button>
     </section>
 
     <section id="result-area" hidden>
@@ -60,4 +66,5 @@
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('scripts/sw.js');
     }
-    </script>
+    
+</script>

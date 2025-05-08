@@ -57,6 +57,17 @@ class Model {
         this.currentIndex = 0;
     }
 
+    async loadQuestionsFromApi(url) {
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            this.questions = data;
+            this.randomQuestions(data);
+            this.currentIndex = 0;
+        } catch (error) {
+            console.error("Fehler beim Laden der Aufgaben:", error);
+        }
+    }
 
 
 }
@@ -74,8 +85,16 @@ class Presenter {
     }
 
     start(category) {
-        const file = `tasks-files/${category}.json`;
-        this.model.loadQuestionsFromFile(file).then(() => {this.setTask();});
+        if(category == "web") {
+            const url = "/tasks-files/web.json" //example file
+            //const url = ""; // my server url
+            this.model.loadQuestionsFromApi(url).then(() => {
+            this.setTask();
+            });
+        } else {
+            const file = `tasks-files/${category}.json`;
+            this.model.loadQuestionsFromFile(file).then(() => {this.setTask();});
+        }
     }
 
      // Holt eine neue Frage aus dem Model und setzt die View
@@ -106,6 +125,10 @@ class Presenter {
         //this.view.showFeedback(isCorrect); if we want show, is user right
         this.setTask();
     }
+
+    exitQuiz() {
+        this.view.showStats(this.model.correctAn, this.model.inccorrectAn);
+    }
 }
 
 // ##################### View #####################################################################
@@ -128,7 +151,15 @@ class View {
         document.getElementById("question-area").hidden = false;
     
         // Показать текст вопроса
-        document.getElementById("question-text").textContent = task.question;
+        //document.getElementById("question-text").textContent = task.question; //works without katex
+        document.getElementById("question-text").innerHTML = task.question; //works with katex
+
+        renderMathInElement(document.getElementById("question-text"), {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "\\(", right: "\\)", display: false }
+            ]
+        });
     
         // Очистить предыдущие кнопки
         const container = document.getElementById("answer");
@@ -137,9 +168,16 @@ class View {
         // Добавить новые кнопки
         task.answers.forEach((answer, index) => {
             const btn = document.createElement("button");
-            btn.textContent = answer;
+            //btn.textContent = answer; //works without Katex
+            btn.innerHTML = answer; //works with Katex
             btn.dataset.index = index;
             container.appendChild(btn);
+        });
+        renderMathInElement(container, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "\\(", right: "\\)", display: false }
+            ]
         });
     }
 
@@ -152,6 +190,10 @@ class View {
                 this.presenter.handleAnswer(index);
             }
         });
+
+        document.getElementById("exit-quiz").addEventListener("click", () => {
+            this.presenter.exitQuiz();
+        });
         //old kusok
         //document.getElementById("start").addEventListener("click", this.start.bind(this), false);
     }
@@ -160,12 +202,21 @@ class View {
     //    this.presenter.setTask();
     //}
 
-    showStats(correct, incorrect) {
+    showStats(correct = 0, incorrect = 0) {
         document.getElementById("question-area").hidden = true;
         document.getElementById("result-area").hidden = false;
 
         document.getElementById("stats").textContent =
             `Richtig: ${correct}, Falsch: ${incorrect}`;
+
+            setTimeout(() => {
+                document.getElementById("result-area").hidden = true;
+                document.getElementById("category-selection").hidden = false;
+        
+                this.presenter.model.currentIndex = 0;
+                this.presenter.model.correctAn = 0;
+                this.presenter.model.incorrectAn = 0;
+            }, 3000);   
     }
 
 

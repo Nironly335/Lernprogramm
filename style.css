@@ -105,19 +105,27 @@ main {
     margin-bottom: 1em;
 }
 
-#answers-container button {
+#answer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75em;
+    margin-bottom: 1em;
+}
+
+#answer button {
     display: block;
     width: 100%;
     margin: 0.5em 0;
     padding: 0.75em;
-    background-color: #6c757d;
-    color: white;
+    background-color: #ec6608;
+    color: black;
     border: none;
     border-radius: 5px;
     cursor: pointer;
 }
 
-#answers-container button:hover {
+#answer button:hover {
     background-color: #5a6268;
 }
 
@@ -126,6 +134,23 @@ main {
     height: 20px;
     margin-top: 1em;
 }
+
+#exit-quiz {
+    margin-top: 1em;
+    padding: 0.75em 1.5em;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s;
+}
+
+#exit-quiz:hover {
+    background-color: #5a6268;
+}
+
 
 /* Результаты */
 #result-area {
