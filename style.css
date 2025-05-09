@@ -157,3 +157,84 @@ main {
     text-align: center;
     font-size: 1.2em;
 }
+
+/* Piano */
+
+#open-piano {
+    margin: 0.5em;
+    padding: 0.75em 1.5em;
+    font-size: 1em;
+    border: none;
+    background-color: #6c757d;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+#open-piano:hover {
+    background-color: #5a6268;
+}
+
+#piano {
+    position: relative;
+    width: 420px;
+    height: 200px;
+    margin: 2em auto;
+  }
+  
+  .white-key {
+    width: 60px;
+    height: 200px;
+    background: white;
+    border: 1px solid #000;
+    float: left;
+    text-align: center;
+    line-height: 190px;
+    font-weight: bold;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .black-key {
+    width: 40px;
+    height: 120px;
+    background: black;
+    color: white;
+    text-align: center;
+    line-height: 110px;
+    position: absolute;
+    z-index: 2;
+    top: 0;
+  }
+
+  .white-key.active {
+    background-color: #ec6608 !important;
+    color: white;
+  }
+
+  .black-key.active {
+    background-color: #ec6608 !important; 
+    color: white;
+  }
+  
+  /*.black-key:nth-of-type(8) { left: 40px; }   
+  .black-key:nth-of-type(9) { left: 100px; }  
+  .black-key:nth-of-type(11) { left: 220px; } 
+  .black-key:nth-of-type(12) { left: 280px; } 
+  .black-key:nth-of-type(13) { left: 340px; } */
+  .black-key:nth-of-type(8)  { left: 45px; }   /* C# */
+  .black-key:nth-of-type(9)  { left: 105px; }  /* D# */
+  .black-key:nth-of-type(11) { left: 225px; }  /* F# */
+  .black-key:nth-of-type(12) { left: 285px; }  /* G# */
+  .black-key:nth-of-type(13) { left: 345px; }  /* A# */
+  
+  #toggle-accidentals {
+    margin-bottom: 1em;
+    padding: 0.5em 1em;
+    font-size: 1em;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }

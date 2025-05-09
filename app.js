@@ -6,13 +6,38 @@ document.addEventListener('DOMContentLoaded', function () {
     let presenter = new Presenter();
     let view = new View(presenter);
     presenter.setModelAndView(model, view);
-    //p.setTask();
 
     document.querySelectorAll("[data-category]").forEach(button => {
         button.addEventListener("click", () => {
-            view.showCategory(button); // передаём нажатую кнопку
+            view.showCategory(button);
         });
     });
+
+    // Обработчики пианино
+    document.querySelectorAll("#piano .white-key, #piano .black-key").forEach(key => {
+        key.addEventListener("click", () => {
+            const note = key.dataset.note;
+            const filename = note + "_note.mp3";
+            const audio = new Audio(`Notes/${filename}`);
+            audio.play();
+
+            key.classList.add("active");
+            setTimeout(() => {
+                key.classList.remove("active");
+            }, 150);
+        });
+    });
+
+    let useFlats = false;
+    const toggleBtn = document.getElementById("toggle-accidentals");
+    if (toggleBtn) {
+        toggleBtn.addEventListener("click", () => {
+            useFlats = !useFlats;
+            document.querySelectorAll(".black-key").forEach(key => {
+                key.textContent = useFlats ? key.dataset.alt : key.dataset.note.replace("sharp", "♯");
+            });
+        });
+    }
 });
 
 // ############# Model ###########################################################################
@@ -194,6 +219,11 @@ class View {
         document.getElementById("exit-quiz").addEventListener("click", () => {
             this.presenter.exitQuiz();
         });
+
+        document.getElementById("open-piano").addEventListener("click", () => {
+            document.getElementById("category-selection").hidden = true;
+            document.getElementById("piano-section").hidden = false;
+          });
         //old kusok
         //document.getElementById("start").addEventListener("click", this.start.bind(this), false);
     }
