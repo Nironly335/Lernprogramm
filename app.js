@@ -174,6 +174,7 @@ class Presenter {
         } else {
             this.view.showStats(this.model.correctAn, this.model.incorrectAn);
         }
+        console.log("Neue Frage setzen");
         /*let frag = this.m.getTask(this.anr);
         View.renderText(frag);
         for (let i = 0; i < 4; i++) {
@@ -199,8 +200,10 @@ class Presenter {
             });
         } else {
             this.model.checkAnswer(index);
+            console.log("Antwort gedrückt:", index);
             this.setTask();
         }
+        console.log("MATHE: handleAnswer(", index, ")");
     }
 
     exitQuiz() {
