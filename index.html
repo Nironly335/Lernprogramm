@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="style.css"> <!--подключение css (нужно для внешнего вида)-->
     <link rel="manifest" href="manifest.json"> <!--подключение манифеста (для PWA)-->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <!--<script src="https://unpkg.com/vexflow/releases/vexflow-min.js"></script> -->
+    <!--<script src="https://unpkg.com/vexflow@4.1.0/build/cjs/vexflow.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/gh/0xfe/vexflow@4.1.0/build/cjs/vexflow.js"></script>
     <script src="app.js" type="module" defer></script> <!--подключение JS-логики, defer нужен, чтобы скрипт выполнялся после загрузки HTML-->
 
     <!--Katex-->
@@ -47,6 +50,7 @@
     <section id="question-area" hidden>
         <div id="question-text"></div>
         <div id="answer"></div>
+        <div id="vex-container" style="margin-top: 1em;"></div>
         <progress id="progress-bar" value="0" max="100"></progress>
         <button id="exit-quiz">Quiz beenden</button>
     </section>
@@ -74,6 +78,7 @@
         <div class="black-key" data-note="Gsharp" data-alt="Ab" style="left: 285px;">G♯</div>
         <div class="black-key" data-note="Asharp" data-alt="Bb" style="left: 345px;">A♯</div>
         </div>
+        <button id="exit-piano">Zurück zum Hauptmenü</button>
     </section>
     
 </main>

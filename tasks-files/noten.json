@@ -1,0 +1,15 @@
+[
+    {
+      "note": "C4",
+      "question": "Welche Note ist das?",
+      "answers": ["C", "D", "E", "F"],
+      "correct": 0
+    },
+    {
+      "note": "D4",
+      "question": "Welche Note ist das?",
+      "answers": ["E", "F", "D", "G"],
+      "correct": 2
+    }
+  ]
+  

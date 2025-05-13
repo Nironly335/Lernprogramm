@@ -1,8 +1,8 @@
 
 [
     {
-      "question": "Hello, motherfucka!",
-      "answers": ["Fuck you!", "Hello, bitch", "Oh, hi Mark!", "Was?"],
+      "question": "Hello!",
+      "answers": ["Hi!", "Halli-Hallo", "Привет", "Ich verstehe nicht"],
       "correct": 2
     }
 ]

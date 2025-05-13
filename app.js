@@ -82,6 +82,7 @@ class Model {
         this.currentIndex = 0;
     }
 
+    /* Old
     async loadQuestionsFromApi(url) {
         try {
             const response = await fetch(url);
@@ -91,6 +92,46 @@ class Model {
             this.currentIndex = 0;
         } catch (error) {
             console.error("Fehler beim Laden der Aufgaben:", error);
+        }
+    }*/
+
+    async loadQuestionsFromApi(url, credentials) {
+    const response = await fetch(url, {
+        headers: {
+            "Authorization": "Basic " + btoa(credentials.email + ":" + credentials.password)
+        }
+    });
+    const result = await response.json();
+    const rawQuestions = result.content || [];
+
+    this.shuffled = rawQuestions.map(q => ({
+        id: q.id,
+        question: q.text,
+        answers: q.options
+    })).sort(() => Math.random() - 0.5);
+
+    this.correctAn = 0;
+    this.incorrectAn = 0;
+    this.currentIndex = 0;
+    }   
+    
+    async checkAnswerServer(index, credentials) {
+        const task = this.shuffled[this.currentIndex - 1]; // последний показанный вопрос
+    
+        const response = await fetch(`https://idefix.informatik.htw-dresden.de:8888/api/quizzes/${task.id}/solve`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Basic " + btoa(credentials.email + ":" + credentials.password)
+            },
+            body: JSON.stringify([index])
+        });
+    
+        const result = await response.json();
+        if (result.success) {
+            this.correctAn++;
+        } else {
+            this.incorrectAn++;
         }
     }
 
@@ -102,6 +143,7 @@ class Presenter {
     constructor() {
         this.model = null;
         this.view = null;
+        this.credentials = { email: "s85138@htw-dresden.de", password: "Passwort" };
     }
 
     setModelAndView(model, view) {
@@ -110,11 +152,12 @@ class Presenter {
     }
 
     start(category) {
+        this.currentCategory = category;
         if(category == "web") {
-            const url = "/tasks-files/web.json" //example file
+            const url = "https://idefix.informatik.htw-dresden.de:8888/api/quizzes"; //example file
             //const url = ""; // my server url
-            this.model.loadQuestionsFromApi(url).then(() => {
-            this.setTask();
+            this.model.loadQuestionsFromApi(url, this.credentials).then(() => {
+                this.setTask();
             });
         } else {
             const file = `tasks-files/${category}.json`;
@@ -146,14 +189,24 @@ class Presenter {
     }*/
 
     handleAnswer(index) {
-        const isCorrect = this.model.checkAnswer(index);
+        //const isCorrect = this.model.checkAnswer(index);
         //this.view.showFeedback(isCorrect); if we want show, is user right
-        this.setTask();
+        //this.setTask();
+
+        if (this.currentCategory === "web") {
+            this.model.checkAnswerServer(index, this.credentials).then(() => {
+                this.setTask();
+            });
+        } else {
+            this.model.checkAnswer(index);
+            this.setTask();
+        }
     }
 
     exitQuiz() {
-        this.view.showStats(this.model.correctAn, this.model.inccorrectAn);
+        this.view.showStats(this.model.correctAn, this.model.incorrectAn);
     }
+
 }
 
 // ##################### View #####################################################################
@@ -161,11 +214,13 @@ class View {
     constructor(presenter) {
         this.presenter = presenter;  // Presenter
         this.setHandler();
+        this.inputLocked = false; //bugfix
     }
 
     showCategory(button) {
         const category = button.dataset.category;
         this.presenter.start(category);
+        this.currentCategory = category;
     }
 
     showQuestion(task) {
@@ -204,9 +259,14 @@ class View {
                 { left: "\\(", right: "\\)", display: false }
             ]
         });
+        if (task.note) {
+            this.drawNote(task.note);
+        }
+        
+        this.inputLocked = false;
     }
 
-    setHandler() {
+    /*setHandler() {
         // use capture false -> bubbling (von unten nach oben aufsteigend)
         // this soll auf Objekt zeigen -> bind (this)
         document.getElementById("answer").addEventListener("click", (event) => {
@@ -216,6 +276,8 @@ class View {
             }
         });
 
+
+
         document.getElementById("exit-quiz").addEventListener("click", () => {
             this.presenter.exitQuiz();
         });
@@ -223,10 +285,48 @@ class View {
         document.getElementById("open-piano").addEventListener("click", () => {
             document.getElementById("category-selection").hidden = true;
             document.getElementById("piano-section").hidden = false;
-          });
+        });
+
+        document.getElementById("exit-piano").addEventListener("click", () => {
+            document.getElementById("piano-section").hidden = true;
+            document.getElementById("category-selection").hidden = false;
+        });
+        //old kusok
+        //document.getElementById("start").addEventListener("click", this.start.bind(this), false);
+    } before bugfixing*/
+    setHandler() {
+        // use capture false -> bubbling (von unten nach oben aufsteigend)
+        // this soll auf Objekt zeigen -> bind (this)
+        document.getElementById("answer").addEventListener("click", (event) => {
+            if (this.inputLocked) return; // блокировка
+        
+            if (event.target.nodeName === "BUTTON") {
+                this.inputLocked = true; // блокируем повторный клик
+                const index = Number(event.target.dataset.index);
+                this.presenter.handleAnswer(index);
+            }
+        });
+        
+
+
+
+        document.getElementById("exit-quiz").addEventListener("click", () => {
+            this.presenter.exitQuiz();
+        });
+
+        document.getElementById("open-piano").addEventListener("click", () => {
+            document.getElementById("category-selection").hidden = true;
+            document.getElementById("piano-section").hidden = false;
+        });
+
+        document.getElementById("exit-piano").addEventListener("click", () => {
+            document.getElementById("piano-section").hidden = true;
+            document.getElementById("category-selection").hidden = false;
+        });
         //old kusok
         //document.getElementById("start").addEventListener("click", this.start.bind(this), false);
     }
+        
 
     //start() {
     //    this.presenter.setTask();
@@ -258,6 +358,37 @@ class View {
         let p = document.createElement("p");
         p.innerHTML = text;
         div.appendChild(p);
+    }
+
+    drawNote(note = "C4") {
+        const VF = Vex.Flow;
+        console.log("drawNote wurde aufgerufen: ", note);
+        const div = document.getElementById("vex-container");
+        div.innerHTML = ""; // очистить при смене задания
+        const renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
+        renderer.resize(250, 150);
+        const context = renderer.getContext();
+    
+        const stave = new VF.Stave(10, 40, 200);
+        stave.addClef("treble").setContext(context).draw();
+        //classic format (D4)
+        // const notes = [new VF.StaveNote({ clef: "treble", keys: [note], duration: "q" })];
+    
+        const formattedNote = note[0].toLowerCase() + "/" + note[1];
+        const notes = [new VF.StaveNote({ clef: "treble", keys: [formattedNote], duration: "q" })];
+        
+        // Добавим диез или бемоль, если нужно
+        if (note.includes("#")) {
+            notes[0].addAccidental(0, new VF.Accidental("#"));
+        } else if (note.includes("b")) {
+            notes[0].addAccidental(0, new VF.Accidental("b"));
+        }
+    
+        const voice = new VF.Voice({ num_beats: 1, beat_value: 4 });
+        voice.addTickables(notes);
+    
+        const formatter = new VF.Formatter().joinVoices([voice]).format([voice], 200);
+        voice.draw(context, stave);
     }
 
 
