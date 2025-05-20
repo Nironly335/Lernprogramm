@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    // Обработчики пианино
+    // Piano handler
     document.querySelectorAll("#piano .white-key, #piano .black-key").forEach(key => {
         key.addEventListener("click", () => {
             const note = key.dataset.note;
@@ -43,15 +43,15 @@ document.addEventListener('DOMContentLoaded', function () {
 // ############# Model ###########################################################################
 class Model {
     constructor() { 
-        this.questions = []; //я понимаю, что неверно, помоги сделать
+        this.questions = [];
         this.shuffled = [];
         this.correctAn = 0;
-        this.incorrectAn = 0;
-        this.currentIndex = 0;
+        this.incorrectAn = 0; //incorrecte Answers
+        this.currentIndex = 0; // for going through array of questions
     }
 
     randomQuestions(questions) {
-        this.shuffled = questions.sort(() => Math.random() - 0.5);
+        this.shuffled = questions.sort(() => Math.random() - 0.5); //random
     }
 
     // Holt eine Frage aus dem Array, zufällig ausgewählt oder vom Server
@@ -82,19 +82,6 @@ class Model {
         this.currentIndex = 0;
     }
 
-    /* Old
-    async loadQuestionsFromApi(url) {
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-            this.questions = data;
-            this.randomQuestions(data);
-            this.currentIndex = 0;
-        } catch (error) {
-            console.error("Fehler beim Laden der Aufgaben:", error);
-        }
-    }*/
-
     async loadQuestionsFromApi(url, credentials) {
     const response = await fetch(url, {
         headers: {
@@ -116,7 +103,7 @@ class Model {
     }   
     
     async checkAnswerServer(index, credentials) {
-        const task = this.shuffled[this.currentIndex - 1]; // последний показанный вопрос
+        const task = this.shuffled[this.currentIndex - 1]; // last shown question
     
         const response = await fetch(`https://idefix.informatik.htw-dresden.de:8888/api/quizzes/${task.id}/solve`, {
             method: "POST",
@@ -157,13 +144,12 @@ class Presenter {
     start(category) {
         this.currentCategory = category;
         if(category == "web") {
-            const url = "https://idefix.informatik.htw-dresden.de:8888/api/quizzes"; //example file
-            //const url = ""; // my server url
+            const url = "https://idefix.informatik.htw-dresden.de:8888/api/quizzes"; //web
             this.model.loadQuestionsFromApi(url, this.credentials).then(() => {
                 this.setTask();
             });
         } else {
-            const file = `tasks-files/${category}.json`;
+            const file = `tasks-files/${category}.json`; //mathe und noten quizzes
             this.model.loadQuestionsFromFile(file).then(() => {this.setTask();});
         }
     }
@@ -181,25 +167,10 @@ class Presenter {
             this.view.showStats(this.model.correctAn, this.model.incorrectAn);
         }
         console.log("Neue Frage setzen");
-        /*let frag = this.m.getTask(this.anr);
-        View.renderText(frag);
-        for (let i = 0; i < 4; i++) {
-            let wert = "42";
-            let pos = i;
-            View.inscribeButtons(i, wert, pos); // Tasten beschriften -> View -> Antworten
-        }*/
+        
     }
 
-    // Prüft die Antwort, aktualisiert Statistik und setzt die View
-    /*checkAnswer(answer) {
-        console.log("Antwort: ", answer);
-    }*/
-
     handleAnswer(index) {
-        //const isCorrect = this.model.checkAnswer(index);
-        //this.view.showFeedback(isCorrect); if we want show, is user right
-        //this.setTask();
-
         console.log("Antwort empfangen:", index);
         if (this.currentCategory === "web") {
             this.model.checkAnswerServer(index, this.credentials).then(() => {
@@ -236,13 +207,13 @@ class View {
     showQuestion(task) {
         console.log("Frage anzeigen:", task.question);
 
-        // Спрятать блок выбора категории
+        // Hide block of category choose
         document.getElementById("category-selection").hidden = true;
     
-        // Показать блок вопросов
+        // Show questionblock
         document.getElementById("question-area").hidden = false;
     
-        // Показать текст вопроса
+        // Show questions text
         //document.getElementById("question-text").textContent = task.question; //works without katex
         document.getElementById("question-text").innerHTML = task.question; //works with katex
 
@@ -253,11 +224,11 @@ class View {
             ]
         });
     
-        // Очистить предыдущие кнопки
+        // Clear previous buttons
         const container = document.getElementById("answer");
         container.innerHTML = "";
     
-        // Добавить новые кнопки
+        // Add new buttons
         task.answers.forEach((answer, index) => {
             const btn = document.createElement("button");
             //btn.textContent = answer; //works without Katex
@@ -273,6 +244,8 @@ class View {
         });
         if (this.currentCategory === "noten" && task.note) {
             this.drawNote(task.note);
+        } else {
+            this.clearNote();
         }
         
         this.inputLocked = false;
@@ -281,50 +254,10 @@ class View {
         bar.value = this.presenter.model.getProgressPercent();
     }
 
-    /*setHandler() {
-        // use capture false -> bubbling (von unten nach oben aufsteigend)
-        // this soll auf Objekt zeigen -> bind (this)
-        document.getElementById("answer").addEventListener("click", (event) => {
-            if (event.target.nodeName === "BUTTON") {
-                const index = Number(event.target.dataset.index);
-                this.presenter.handleAnswer(index);
-            }
-        });
-
-
-
-        document.getElementById("exit-quiz").addEventListener("click", () => {
-            this.presenter.exitQuiz();
-        });
-
-        document.getElementById("open-piano").addEventListener("click", () => {
-            document.getElementById("category-selection").hidden = true;
-            document.getElementById("piano-section").hidden = false;
-        });
-
-        document.getElementById("exit-piano").addEventListener("click", () => {
-            document.getElementById("piano-section").hidden = true;
-            document.getElementById("category-selection").hidden = false;
-        });
-        //old kusok
-        //document.getElementById("start").addEventListener("click", this.start.bind(this), false);
-    } before bugfixing*/
+    
     setHandler() {
         // use capture false -> bubbling (von unten nach oben aufsteigend)
         // this soll auf Objekt zeigen -> bind (this)
-        
-        /*document.getElementById("answer").addEventListener("click", (event) => {
-            console.log("click:", event.target);
-            if (this.inputLocked) {
-                console.warn("Eingabe gesperrt");
-                return; // блокировка
-            }
-            if (event.target.nodeName === "BUTTON") {
-                this.inputLocked = true; // блокируем повторный клик
-                const index = Number(event.target.dataset.index);
-                this.presenter.handleAnswer(index);
-            }
-        });*/
         document.getElementById("answer").addEventListener("click", (event) => {
             const button = event.target.closest("button");
             if (!button) return;
@@ -351,15 +284,9 @@ class View {
             document.getElementById("piano-section").hidden = true;
             document.getElementById("category-selection").hidden = false;
         });
-        //old kusok
-        //document.getElementById("start").addEventListener("click", this.start.bind(this), false);
+       
     }
         
-
-    //start() {
-    //    this.presenter.setTask();
-    //}
-
     showStats(correct = 0, incorrect = 0) {
         document.getElementById("question-area").hidden = true;
         document.getElementById("result-area").hidden = false;
@@ -374,14 +301,13 @@ class View {
                 this.presenter.model.currentIndex = 0;
                 this.presenter.model.correctAn = 0;
                 this.presenter.model.incorrectAn = 0;
-            }, 3000);   
+            }, 1000);   
     }
 
 
     
 
     static renderText(text) {
-        //this.clearElement("boo");
         let div = document.getElementById("boo");
         let p = document.createElement("p");
         p.innerHTML = text;
@@ -392,20 +318,18 @@ class View {
         const VF = Vex.Flow;
         console.log("drawNote wurde aufgerufen: ", note);
         const div = document.getElementById("vex-container");
-        div.innerHTML = ""; // очистить при смене задания
+        div.innerHTML = ""; // clear by changing of task
         const renderer = new VF.Renderer(div, VF.Renderer.Backends.SVG);
         renderer.resize(250, 150);
         const context = renderer.getContext();
     
         const stave = new VF.Stave(10, 40, 200);
         stave.addClef("treble").setContext(context).draw();
-        //classic format (D4)
-        // const notes = [new VF.StaveNote({ clef: "treble", keys: [note], duration: "q" })];
     
         const formattedNote = note[0].toLowerCase() + "/" + note[1];
         const notes = [new VF.StaveNote({ clef: "treble", keys: [formattedNote], duration: "q" })];
         
-        // Добавим диез или бемоль, если нужно
+        // Add # and b changing
         if (note.includes("#")) {
             notes[0].addAccidental(0, new VF.Accidental("#"));
         } else if (note.includes("b")) {
@@ -419,17 +343,8 @@ class View {
         voice.draw(context, stave);
     }
 
-
-    //говно старое
-    static inscribeButtons(i, text, pos) {
-        document.querySelectorAll("#answer > *")[i].textContent = text;
-        document.querySelectorAll("#answer > *")[i].setAttribute("number", pos);
-    }
-
-    checkEvent(event) {
-        console.log(event.type);
-        if (event.target.nodeName === "BUTTON") {
-            this.p.checkAnswer(Number(event.target.attributes.getNamedItem("number").value));
-        }
+    clearNote() {
+        const div = document.getElementById("vex-container");
+        if (div) div.innerHTML = "";
     }
 }
