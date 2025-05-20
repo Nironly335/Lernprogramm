@@ -10,6 +10,25 @@
       "question": "Welche Note ist das?",
       "answers": ["E", "F", "D", "G"],
       "correct": 2
+    },
+    {
+      "note": "F4",
+      "question": "Welche Note ist das?",
+      "answers": ["E", "F", "D", "G"],
+      "correct": 1
+    },
+    {
+      "note": "B4",
+      "question": "Welche Note ist das?",
+      "answers": ["B", "E", "A", "G"],
+      "correct": 0
+    },
+    {
+      "note": "A4",
+      "question": "Welche Note ist das?",
+      "answers": ["E", "C", "F", "A"],
+      "correct": 3
     }
+
   ]
   

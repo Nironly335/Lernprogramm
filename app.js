@@ -135,6 +135,9 @@ class Model {
         }
     }
 
+    getProgressPercent() {
+        return (this.currentIndex / this.shuffled.length) * 100;
+    }
 
 }
 
@@ -167,11 +170,14 @@ class Presenter {
 
      // Holt eine neue Frage aus dem Model und setzt die View
     setTask() {
+        console.log("Neue Frage holen...");
         const task = this.model.getTask();
 
         if (task) {
+            console.log("Frage: ", task);
             this.view.showQuestion(task);
         } else {
+            console.log("Keine Fragen mehr!");
             this.view.showStats(this.model.correctAn, this.model.incorrectAn);
         }
         console.log("Neue Frage setzen");
@@ -194,6 +200,7 @@ class Presenter {
         //this.view.showFeedback(isCorrect); if we want show, is user right
         //this.setTask();
 
+        console.log("Antwort empfangen:", index);
         if (this.currentCategory === "web") {
             this.model.checkAnswerServer(index, this.credentials).then(() => {
                 this.setTask();
@@ -227,6 +234,8 @@ class View {
     }
 
     showQuestion(task) {
+        console.log("Frage anzeigen:", task.question);
+
         // Спрятать блок выбора категории
         document.getElementById("category-selection").hidden = true;
     
@@ -262,11 +271,14 @@ class View {
                 { left: "\\(", right: "\\)", display: false }
             ]
         });
-        if (task.note) {
+        if (this.currentCategory === "noten" && task.note) {
             this.drawNote(task.note);
         }
         
         this.inputLocked = false;
+
+        const bar = document.getElementById("progress-bar");
+        bar.value = this.presenter.model.getProgressPercent();
     }
 
     /*setHandler() {
@@ -300,16 +312,29 @@ class View {
     setHandler() {
         // use capture false -> bubbling (von unten nach oben aufsteigend)
         // this soll auf Objekt zeigen -> bind (this)
-        document.getElementById("answer").addEventListener("click", (event) => {
-            if (this.inputLocked) return; // блокировка
         
+        /*document.getElementById("answer").addEventListener("click", (event) => {
+            console.log("click:", event.target);
+            if (this.inputLocked) {
+                console.warn("Eingabe gesperrt");
+                return; // блокировка
+            }
             if (event.target.nodeName === "BUTTON") {
                 this.inputLocked = true; // блокируем повторный клик
                 const index = Number(event.target.dataset.index);
                 this.presenter.handleAnswer(index);
             }
-        });
+        });*/
+        document.getElementById("answer").addEventListener("click", (event) => {
+            const button = event.target.closest("button");
+            if (!button) return;
         
+            if (this.inputLocked) return;
+        
+            this.inputLocked = true;
+            const index = Number(button.dataset.index);
+            this.presenter.handleAnswer(index);
+        });
 
 
 
