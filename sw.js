@@ -12,8 +12,8 @@ const FILES_TO_CACHE = [
   "katex/katex.js",
   "katex/contrib/auto-render.js",
   "tasks-files/mathe.json",
-  "tasks-files/web.json",
   "tasks-files/noten.json",
+  "tasks-files/mathe_without_katex.json",
   "Notes/C_note.mp3",
   "Notes/D_note.mp3",
   "Notes/E_note.mp3",
@@ -25,14 +25,27 @@ const FILES_TO_CACHE = [
   "Notes/Dsharp_note.mp3",
   "Notes/Fsharp_note.mp3",
   "Notes/Gsharp_note.mp3",
-  "Notes/Asharp_note.mp3"
+  "Notes/Asharp_note.mp3",
+  "mvp-demo/mvp.css",
+  "mvp-demo/mvp.html",
+  "mvp-demo/mvp.js",
+  "mathe-demo.html"  
 ];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log("[Service Worker] Caching app shell...");
-      return cache.addAll(FILES_TO_CACHE);
+    caches.open(CACHE_NAME).then(async (cache) => {
+      console.log("[Service Worker] Caching files...");
+      for (const file of FILES_TO_CACHE) {
+        try {
+          const response = await fetch(file);
+          if (!response.ok) throw new Error(`Request failed: ${file}`);
+          await cache.put(file, response.clone());
+          console.log(`[Service Worker] Cached: ${file}`);
+        } catch (err) {
+          console.error(`[Service Worker] Failed to cache ${file}:`, err);
+        }
+      }
     })
   );
 });
