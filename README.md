@@ -81,31 +81,30 @@ Der Benutzer kann:
 - `setHandler()` – registriert Event-Handler
 
 ## Projektstruktur
-/Lernprogramm
-├── app.js
-├── index.html
-├── style.css
-├── manifest.json
-├── README.md
-├── TODO.md
-├── Logic of MVP.md
-├── Beleg-Abgabeformat.md
-├── Beleg-Aufgabenstellung.md
-├── mathe-demo.html
-├── images/
-│ └── demo.png, logo--image.png
-├── katex/
-│ ├── katex.css, katex.js
-│ ├── contrib/
-│ └── fonts/
-├── mvp-demo/
-│ └── mvp.html, mvp.css, mvp.js
-├── Notes/
-│ └── A_note.mp3, Asharp_note.mp3, ...
-├── scripts/
-│ └── sw.js
-├── tasks-files/
-│ └── mathe.json, mathe_without_katex.json, noten.json, ...
+- /Lernprogramm
+- ├── app.js
+- ├── index.html
+- ├── style.css
+- ├── manifest.json
+- ├── README.md
+- ├── TODO.md
+- ├── Logic of MVP.md
+- ├── Beleg-Abgabeformat.md
+- ├── Beleg-Aufgabenstellung.md
+- ├── mathe-demo.html
+- ├── sw.js
+- ├── images/
+- │ └── demo.png, logo--image.png
+- ├── katex/
+- │ ├── katex.css, katex.js
+- │ ├── contrib/
+- │ └── fonts/
+- ├── mvp-demo/
+- │ └── mvp.html, mvp.css, mvp.js
+- ├── Notes/
+- │ └── A_note.mp3, Asharp_note.mp3, ...
+- ├── tasks-files/
+- │ └── mathe.json, mathe_without_katex.json, noten.json, ...
 
 ## Verwendete Technologien
 
@@ -152,7 +151,7 @@ Verwendet wird das REST-API des Projekts [Web-Quiz-Engine](https://github.com/sw
 - **KaTeX-Schriftart fehlt**  
   Lösung: Sicherstellung, dass Schriftarten im `katex/fonts` verfügbar sind.
 
-- **Letzte Note bleibt sichtbar**  
+- **Letzte Note bleibt sichtbar in der Kategorie Notenlernen**  
   Lösung: `clearNote()` in View bei Kategorie-Wechsel implementiert.
 
 - **Kein Ton bei Piano**  
@@ -175,7 +174,7 @@ Alle relevanten Teile wurden überprüft, getestet und dokumentiert.
 
 **Radmir Mullagaliev**  
 Matrikelnummer: s85138  
-HTW Dresden, Fakultät Informatik
+HTW Dresden, Studiengang Informatik
 
 ## Erledigte Punkte
 
