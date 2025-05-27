@@ -209,3 +209,17 @@ main {
 #exit-piano:hover {
     background-color: #6c757d;
 }
+
+@media (max-width: 600px) {
+    #category-selection {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5em;
+    }
+
+    #category-selection button {
+        width: 90%;
+        max-width: 300px;
+    }
+}
